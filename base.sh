@@ -267,19 +267,21 @@ function Check_Linux_12(){
 
         if [ -z $SYSLOG_PACKAGE ];
         then
-            SYSLOG_CONF_FILE=`rpm -ql $SYSLOG_PACKAGE|grep '.*conf$'|head -1`
-            Chk_Conf_Backup $SYSLOG_CONF_FILE
-        else
+
             echo " 未找到syslog进程! 检查是否已启动syslog(或rsyslog)";
             echo "请尝试使用service syslog start并设置开机启动chkconfig syslog on"
             echo "或service rsyslog restart和chkconfig rsyslog on"
             return 1;
+        else
+             SYSLOG_CONF_FILE=`rpm -ql $SYSLOG_PACKAGE|grep '.*conf$'|head -1`
+            Chk_Conf_Backup $SYSLOG_CONF_FILE
         fi
 
         echo -e "auth.info\t\t/var/adm/authlog\n*.info;auth.none\t\t/var/adm/syslog\n" >> $SYSLOG_CONF_FILE
         if [ -d /var/adm/ ]; 
             then 
 #do nothing;
+                echo ;
         else 
             mkdir /var/adm;
             chown root:system /var/adm
@@ -291,7 +293,7 @@ function Check_Linux_12(){
         chmod 640 /var/adm/syslog
         SYSLOG_EXECUTEFILE=`rpm -ql $SYSLOG_PACKAGE |grep '^/etc/rc.d/init.d/*\|^/etc/init.d/*'|head -1`
         $SYSLOG_EXECUTEFILE restart;
-		    Out_msg_end;
+		Out_msg_end;
 }
 
 function Check_Linux_13(){
@@ -300,13 +302,13 @@ function Check_Linux_13(){
 
         if [ -z $SYSLOG_PACKAGE ];
         then
-            SYSLOG_CONF_FILE=`rpm -ql $SYSLOG_PACKAGE|grep '.*conf$'|head -1`
-            Chk_Conf_Backup $SYSLOG_CONF_FILE
-        else
             echo " 未找到syslog进程! 检查是否已启动syslog(或rsyslog)";
             echo "请尝试使用service syslog start并设置开机启动chkconfig syslog on"
             echo "或service rsyslog restart和chkconfig rsyslog on"
             return 1;
+        else 
+             SYSLOG_CONF_FILE=`rpm -ql $SYSLOG_PACKAGE|grep '.*conf$'|head -1`
+            Chk_Conf_Backup $SYSLOG_CONF_FILE
         fi
 
         echo -e "*.err;kern.debug;daemon.notice;\t\t/var/adm/messages" >> $SYSLOG_CONF_FILE;
@@ -314,6 +316,8 @@ function Check_Linux_13(){
         if [ -d /var/adm/ ]; 
             then 
 #do nothing;
+            echo ;
+            echo ;
         else 
             mkdir /var/adm;
             chown root:system /var/adm
@@ -388,6 +392,19 @@ function Check_Linux_19(){
     Out_msg_end;
 }
 
+function Check_Linux_20(){
+    Out_msg 20 "对于具备字符交互界面的设备，应配置定时帐户自动登出"
+    
+    Chk_Conf_Backup /etc/profile
+    Chk_Conf_Backup  /etc/environment
+    Chk_Conf_Backup /etc/security/.profile
+echo "TMOUT=120 ; TIMEOUT=120 ; export readonly TMOUT TIMEOUT" >> /etc/profile
+echo "TMOUT=120 ; TIMEOUT=120 ; export readonly TMOUT TIMEOUT" >> /etc/environment
+echo "TMOUT=120 ; TIMEOUT=120 ; export readonly TMOUT TIMEOUT" >> /etc/security/.profile
+        
+
+    Out_msg_end;
+}
 
 #==================main start================================
 
