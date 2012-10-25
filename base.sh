@@ -118,14 +118,18 @@ function Check_Linux_3(){
 }
 function Check_Linux_4(){
 
+    Out_msg 4 "根据系统要求及用户的业务需求，建立多帐户组，将用户账号分配到相应的帐户组。"
 	#do not something;
+    echo "请手动检查"
+    Out_msg_end;
 	return 0;
 }
 
 function Check_Linux_5(){
-
+    Out_msg 5 "对系统账号进行登录限制，确保系统账号仅被守护进程和服务使用，不应直接由该账号登录系统。如果系统没有应用这些守护进程或服务，应删除这些账号。"
 	#do not something;
-
+    echo "请手动检查";
+    Out_msg_end;
 	return 0;
 }
 
@@ -284,11 +288,11 @@ function Check_Linux_12(){
                 echo ;
         else 
             mkdir /var/adm;
-            chown root:system /var/adm
+            chown root:sys /var/adm
         fi
         touch /var/adm/authlog /var/adm/syslog
-        chown root:system /var/adm/authlog
-        chown root:system /var/adm/syslog
+        chown root:sys /var/adm/authlog
+        chown root:sys /var/adm/syslog
         chmod 600 /var/adm/authlog  
         chmod 640 /var/adm/syslog
         SYSLOG_EXECUTEFILE=`rpm -ql $SYSLOG_PACKAGE |grep '^/etc/rc.d/init.d/*\|^/etc/init.d/*'|head -1`
@@ -320,7 +324,7 @@ function Check_Linux_13(){
             echo ;
         else 
             mkdir /var/adm;
-            chown root:system /var/adm
+            chown root:sys /var/adm
         fi
 
         SYSLOG_EXECUTEFILE=`rpm -ql $SYSLOG_PACKAGE |grep '^/etc/rc.d/init.d/*\|^/etc/init.d/*'|head -1`
@@ -393,23 +397,30 @@ function Check_Linux_19(){
 }
 
 function Check_Linux_20(){
-    Out_msg 20 "对于具备字符交互界面的设备，应配置定时帐户自动登出"
+    Out_msg 20 "对于具备字符交互界面的设备，应配置定时帐户自动登出";
     
     Chk_Conf_Backup /etc/profile
     Chk_Conf_Backup  /etc/environment
     Chk_Conf_Backup /etc/security/.profile
-    Var=`env |awk -F"=" '$1~/TIME/{print $2}'`;
-            if  [ "$Var" > "120" && "$Var" != 0]; then
+    Var=`env |awk -F"=" '$1~/TIME/{print $2}'` 
+            if  [ "$Var" -ge 120 ] && [ "$Var" != "0"]; then
                 echo "已加固"
             else
-                echo "未加固，现在修改/etc/profile，etc/environment，/etc/security/.profile文件";            
-                echo "TMOUT=120 ; TIMEOUT=120 ; export readonly TMOUT TIMEOUT" >> /etc/profile
-                echo "TMOUT=120 ; TIMEOUT=120 ; export readonly TMOUT TIMEOUT" >> /etc/environment
-                echo "TMOUT=120 ; TIMEOUT=120 ; export readonly TMOUT TIMEOUT" >> /etc/security/.profile
-if
-    Out_msg_end;
-}
+                Var2=`grep "^TMOUT=120" /etc/profile|head -1 |awk -F"=" '{print $1}'`
+                    
+                    if [ -z $Var2 ] ; then
+                        echo "未加固，现在修改/etc/profile，etc/environment，/etc/security/.profile文件";            
+                echo "TMOUT=120 ; TIMEOUT=120 ; export readonly TMOUT TIMEOUT" >> /etc/profile;
+                echo "TMOUT=120 ; TIMEOUT=120 ; export readonly TMOUT TIMEOUT" >> /etc/environment;
+                echo "TMOUT=120 ; TIMEOUT=120 ; export readonly TMOUT TIMEOUT" >> /etc/security/.profile;
 
+                    else
+                        echo "已加固"
+                            fi
+                            fi
+    Out_msg_end;
+    return 0;
+}
 function Check_Linux_21(){
     Out_msg 21 "对于具备图形界面（含WEB界面）的设备，应配置定时自动屏幕锁定。"
     
@@ -454,7 +465,7 @@ else
 	do 
 	echo -e "检查文件："$i
 	echo -e "文件权限不是750\t现在修改..."
-	chmod 750；
+	chmod 750 $i ；
 	echo -e "已修改为750。";
 	done
 fi
@@ -475,7 +486,7 @@ function Check_Linux_23(){
 function Check_Linux_24(){
     Out_msg 24 "在系统安装时建议只安装基本的OS部份，其余的软件包则以必要为原则，非必需的包就不装。"
 
-echo "执行下列命令，查看版本及大补丁号。\n#uname –a\n执行下列命令，查看各包的补丁号\n#rpm -qa\n" 
+echo -e "执行下列命令，查看版本及大补丁号。\n#uname –a\n执行下列命令，查看各包的补丁号\n#rpm -qa\n" 
 
     Out_msg_end
     return 0;
@@ -483,7 +494,7 @@ echo "执行下列命令，查看版本及大补丁号。\n#uname –a\n执行�
 
 function Check_Linux_25(){
     Out_msg 25 "应根据需要及时进行补丁装载。对服务器系统应先进行兼容性测试。"
-echo "#rpm –qa命令查看版本；\n#RPM-ivh ***.RPM 命令给系统打补丁；"
+echo -e "#rpm –qa命令查看版本；\n#RPM-ivh ***.RPM 命令给系统打补丁；"
 
     Out_msg_end;
     return 0;
