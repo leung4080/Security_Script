@@ -398,14 +398,155 @@ function Check_Linux_20(){
     Chk_Conf_Backup /etc/profile
     Chk_Conf_Backup  /etc/environment
     Chk_Conf_Backup /etc/security/.profile
-echo "TMOUT=120 ; TIMEOUT=120 ; export readonly TMOUT TIMEOUT" >> /etc/profile
-echo "TMOUT=120 ; TIMEOUT=120 ; export readonly TMOUT TIMEOUT" >> /etc/environment
-echo "TMOUT=120 ; TIMEOUT=120 ; export readonly TMOUT TIMEOUT" >> /etc/security/.profile
+    Var=`env |awk -F"=" '$1~/TIME/{print $2}'`;
+            if  [ "$Var" > "120" && "$Var" != 0]; then
+                echo "已加固"
+            else
+                echo "未加固，现在修改/etc/profile，etc/environment，/etc/security/.profile文件";            
+                echo "TMOUT=120 ; TIMEOUT=120 ; export readonly TMOUT TIMEOUT" >> /etc/profile
+                echo "TMOUT=120 ; TIMEOUT=120 ; export readonly TMOUT TIMEOUT" >> /etc/environment
+                echo "TMOUT=120 ; TIMEOUT=120 ; export readonly TMOUT TIMEOUT" >> /etc/security/.profile
+if
+    Out_msg_end;
+}
+
+function Check_Linux_21(){
+    Out_msg 21 "对于具备图形界面（含WEB界面）的设备，应配置定时自动屏幕锁定。"
+    
+        Chk_Conf_Backup /etc/profile
+    Var=`awk '$1~/^setterm/{print $3}' /etc/profile`;
         
+    if [ "$Var" == "1" ] ; then
+        echo "已加固；"
+    else
+        echo "未加固，现在修改/etc/profile文件";
+        echo "setterm -blank 1" >> /etc/profile;
+    fi
+        
+    Out_msg_end;
+    return 0;
+}
+
+function Check_Linux_22(){
+    Out_msg 22 "涉及账号、账号组、口令、服务等的重要文件和目录的权限设置不能被任意人员删除，修改。"
+    
+Var=` find /etc/rc.d/init.d/ -maxdepth 1 -mindepth 1 ! -user root  |head -1`
+if [ -z $Var ] ;
+then
+	echo "/etc/rc.d/init.d/下所有文件属主均为root。不需修改。"
+else
+	for i in `find /etc/rc.d/init.d/ -maxdepth 1 -mindepth 1 ! -user root`; 
+	do 
+	echo -e "检查文件："$i
+	echo -e "文件属主不是root\t现在修改...";
+	chown root $i;
+	echo "已修改"
+	done
+fi
+
+
+Var=`find /etc/rc.d/init.d/ -maxdepth 1 -mindepth 1 ! -perm 750 -o ! -user root  |head -1`; 
+if [ -z $Var ] ;
+then
+	echo "/etc/rc.d/init.d/下所有文件权限为750"
+else 
+	for i in `find /etc/rc.d/init.d/ -maxdepth 1 -mindepth 1 ! -perm 750`; 
+	do 
+	echo -e "检查文件："$i
+	echo -e "文件权限不是750\t现在修改..."
+	chmod 750；
+	echo -e "已修改为750。";
+	done
+fi
 
     Out_msg_end;
 }
 
+function Check_Linux_23(){
+    Out_msg 23 "应该从应用层面进行必要的安全访问控制，比如FTP服务器应该限制ftp可以使用的目录范围。"
+
+    echo "do nothing!"
+    #do nothings    
+
+    Out_msg_end;
+    return 0
+}
+
+function Check_Linux_24(){
+    Out_msg 24 "在系统安装时建议只安装基本的OS部份，其余的软件包则以必要为原则，非必需的包就不装。"
+
+echo "执行下列命令，查看版本及大补丁号。\n#uname –a\n执行下列命令，查看各包的补丁号\n#rpm -qa\n" 
+
+    Out_msg_end
+    return 0;
+}
+
+function Check_Linux_25(){
+    Out_msg 25 "应根据需要及时进行补丁装载。对服务器系统应先进行兼容性测试。"
+echo "#rpm –qa命令查看版本；\n#RPM-ivh ***.RPM 命令给系统打补丁；"
+
+    Out_msg_end;
+    return 0;
+}
+
+function Check_Linux_26(){
+    Out_msg 26 "如果网络中存在信任的NTP服务器，应该配置系统使用NTP服务保持时间同步。"
+
+        echo -e "手动配置，参考配置操作：\n
+#crontab -e 
+加入一行：30 8 * * * root /usr/sbin/ntpdate $ServerIP; /sbin/hwclock -w 
+（$ServerIP为NTP服务器IP地址,i.e:192.168.0.1）
+并检查crond是否已启用：#chkconfig --list|grep crond；service crond status；
+需要将其开启：#chkconfig crond on; service crond start;
+检查ntpd服务器是否已关闭，#chkconfig --list|grep ntpd；service ntpd status;
+需要将其关闭：#chkconfig ntpd off;service ntpd stop"
+
+    Out_msg_end;
+    return 0;
+}
+
+function Check_Linux_27(){
+    Out_msg 27 "NFS服务：如果没有必要，需要停止NFS服务；如果需要NFS服务，需要限制能够访问NFS服务的IP范围。"
+    echo -e "
+停止NFS服务
+Service nfs stop
+
+限制能够访问NFS服务的IP范围：
+编辑文件：vi /etc/hosts.allow
+增加一行: nfs: 允许访问的IP    
+    "
+
+    Out_msg_end;
+    return 0;
+}
+
+function Check_Linux_28(){
+    Out_msg 28 "防止堆栈缓冲溢出";
+
+        Limit_Conf_File=/etc/security/limits.conf
+        Var=`ulimit -c`
+            if [ $Var == 0 ] ; then
+                echo "已加固"；
+            else
+                echo "未配置$Limit_Conf_File的core项为0；现在修改..."
+                echo "* soft core 0" >>$Limit_Conf_File
+                echo "* hard core 0" >>$Limit_Conf_File
+                echo "已修改。"
+            fi
+
+    Out_msg_end;
+    return 0;
+}
+
+function Check_Linux_29(){
+    Out_msg 29 "列出系统启动时自动加载的进程和服务列表，不在此列表的需关闭。";
+
+    echo "关闭不经常使用的服务:如sendmail portmap cups named apache xfs vsftpd lpd linuxconf identd smb等服务。"
+    echo "请手动执行ServConf.sh脚本。"
+    
+    Out_msg_end;
+    return 0;
+}
 #==================main start================================
 
 BACKUP_SYS_CONF;
