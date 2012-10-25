@@ -572,12 +572,11 @@ time echo discard daytime chargen fs dtspc exec comsat talk finger uucp name xau
 
 BACKUP_SYS_CONF;
 
-Check_Linux_1;
-Check_Linux_2;
-Check_Linux_3;
-Check_Linux_6;
-Check_Linux_7;
-Check_Linux_8;
-Check_Linux_10;
+for i in `seq 1 31`
+do
+    Check_Linux_$i;
+done
+
+echo "完成初始化。请重启操作系统reboot"
 
 exit 0;
