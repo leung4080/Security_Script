@@ -547,7 +547,28 @@ function Check_Linux_29(){
     Out_msg_end;
     return 0;
 }
+
+function Check_Linux_30(){
+    Out_msg 30 "监视服务器的CPU、硬盘、内存、网络等资源。";
+
+    echo "使用第三方主机监控系统进行监控"    
+
+    Out_msg_end;
+    return 0;
+}
+
+function Check_Linux_31(){
+    Out_msg 31 "列出所需要服务的列表(包括所需的系统服务)，不在此列表的服务需关闭。"
+
+echo "根据系统应用情况选择禁止下列不必要的基本网络服务。
+time echo discard daytime chargen fs dtspc exec comsat talk finger uucp name xaudio netstat ufsd rexd systat sun-dr uuidgen krb5_prop"
+    Out_msg_end;
+    return 0;
+}
+
 #==================main start================================
+
+
 
 BACKUP_SYS_CONF;
 
