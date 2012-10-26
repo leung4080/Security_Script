@@ -17,9 +17,10 @@ function Out_msg(){
     echo "====================================="
 
 }
+
 function Out_msg_end(){
     echo "-----------------------"
-    echo 
+    echo "--------CHECKED--------"
     echo 
 }
 
@@ -576,6 +577,10 @@ time echo discard daytime chargen fs dtspc exec comsat talk finger uucp name xau
     Out_msg_end;
     return 0;
 }
+#===========================================================
+
+
+
 
 #==================main start================================
 
