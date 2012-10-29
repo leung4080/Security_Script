@@ -347,6 +347,23 @@ function Venus_Linux_22(){
 }
 function Venus_Linux_32(){
     Out_msg_Venus 32 "xinetd/inetd服务信息检查";
+
+    INET=`rpm -qa | grep inet`
+    INET_NAME=`echo $INET|awk -F"-" '{print $1}'`
+    if [ -z $INET ] ;then
+        echo "未安装xinetd或inetd。请先安装xinetd或inetd组件!"；
+        return 1;
+    fi
+    INET_SCRIPT=`rpm -ql $INET |grep "^/etc/rc.*xinetd"`
+    $INET_SCRIPT status;
+    RETVAL=$?
+    if [ $RETVAL -ne 0 ] ;then
+        echo "$INET_NAME未启动";
+        echo "现在启动$INET_NAME"
+        $INET_SCRIPT start ;
+    else
+        echo "$INET_NAME已启动，已加固"
+    fi
     
     Out_msg_end;
     return 0;
@@ -354,18 +371,37 @@ function Venus_Linux_32(){
 function Venus_Linux_33(){
     Out_msg_Venus 33 "/etc/host.conf信息检查";
 
+    CONF_FILE=/etc/host.conf
+    Chk_Conf_Backup $CONF_FILE;
+    Var=`grep "order hosts,bind" $CONF_FILE`
+
+        if [ -z $Var ] ; then
+            echo "未加固，现在修改$CONF_FILE文件"
+            echo "order hosts,bind">> $CONF_FILE;
+        else
+            echo "已加固"
+                fi
+
     Out_msg_end;
     return 0;
 }
 function Venus_Linux_36(){
     Out_msg_Venus 36 "不同主机间信任关系检查";
+    CONF_FILE=/etc/hosts.equiv
+    Chk_Conf_Backup $CONF_FILE;
+    if [ -f $CONF_FILE ] then
+        echo "未加固,现在删除$CONF_FILE文件";
+        rm -f $CONF_FILE;
+    else
+        echo "已加固"
+        fi
 
     Out_msg_end;
     return 0;
 }
 function Venus_Linux_38(){
     Out_msg_Venus 38 "系统ping响应信息检查";
-
+    
     Out_msg_end;
     return 0;
 }
