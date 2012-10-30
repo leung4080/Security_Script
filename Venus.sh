@@ -111,7 +111,9 @@ function Venus_Linux_4(){
             /usr/sbin/usermod -s $SHELL_PATH root
         else
             echo "已加固";
-                fi
+                fifor i in `/sbin/sysctl -a |awk -F"=" '$1~/accept_source_route/{print $1}'` ; do
+            echo $i" = 0"
+        done
     Out_msg_end;
     return 0;
 }
@@ -354,13 +356,14 @@ function Venus_Linux_32(){
         echo "未安装xinetd或inetd。请先安装xinetd或inetd组件!"；
         return 1;
     fi
-    INET_SCRIPT=`rpm -ql $INET |grep "^/etc/rc.*xinetd"`
+    INET_SCRIPT=`rpm -ql $INET |grep "^/etc/rc.*inetd"`
     $INET_SCRIPT status;
     RETVAL=$?
     if [ $RETVAL -ne 0 ] ;then
         echo "$INET_NAME未启动";
         echo "现在启动$INET_NAME"
         $INET_SCRIPT start ;
+        /sbin/chkconfig $INET_NAME on
     else
         echo "$INET_NAME已启动，已加固"
     fi
@@ -385,28 +388,47 @@ function Venus_Linux_33(){
     Out_msg_end;
     return 0;
 }
+
 function Venus_Linux_36(){
     Out_msg_Venus 36 "不同主机间信任关系检查";
     CONF_FILE=/etc/hosts.equiv
     Chk_Conf_Backup $CONF_FILE;
-    if [ -f $CONF_FILE ] then
+    if [ -f $CONF_FILE ] ;then
         echo "未加固,现在删除$CONF_FILE文件";
         rm -f $CONF_FILE;
     else
         echo "已加固"
-        fi
+    fi
 
     Out_msg_end;
     return 0;
 }
 function Venus_Linux_38(){
     Out_msg_Venus 38 "系统ping响应信息检查";
+    Var=`cat /proc/sys/net/ipv4/icmp_echo_ignore_all`
     
+        if [ $Var -ne 0 ] ; then
+            echo "已加固"
+        else
+            echo "未加固，现在加固"
+            echo "net.ipv4.icmp_echo_ignore_all = 1" >> /etc/sysctl.conf
+            /sbin/sysctl -p
+                fi
+
     Out_msg_end;
     return 0;
 }
 function Venus_Linux_40(){
     Out_msg_Venus 40 "系统是否安装ftp信息检查";
+
+    Var=` rpm -qa | grep ftp|wc -l` 
+    Var2=`ls /etc/xinetd.d/*ftp*|wc -l`
+    
+    if [ $Var -gt 0 ] && [ $Var2 -gt 0 ] ; then
+       echo "已加固"
+    else
+       echo "未加固,请手动安装ftp软件"
+    fi
 
     Out_msg_end;
     return 0;
@@ -414,17 +436,82 @@ function Venus_Linux_40(){
 function Venus_Linux_48(){
     Out_msg_Venus 48 "ftpd服务";
 
+    Chk_Conf_Backup /etc/syslog.conf;
+    if [ -f /etc/rc.d/init.d/xinetd ] ; then
+        test 
+    else
+        echo "xinetd启动文件不存在，请检查xinetd是否正确安装"
+        return 1;
+    fi
+    
+    Var=`grep -v "#" /etc/xinetd.d/* | grep "service ftp"|wc -l` 
+    if [ $Var -ne 0 ] ; then
+       LOOP=`grep -v "#" /etc/xinetd.d/* | grep "service ftp" |awk -F":" '{print $1}'`
+       
+       for FTP_FILE_CONF in $LOOP; do
+            VAR_FF=`awk '/^[^#].*server_args/&&/-l/&&/-r/&&/-A/&&/-S/' $FTP_FILE_CONF|wc -l`
+            if [ $VAR_FF -n 0] ; then
+                echo "$FTP_FILE_CONF已加固"
+            else
+                echo "$FTP_FILE_CONF未加固,现在修改"
+                sed -r ':a;N;$!ba;s/(.*\n)(.*})/\1server_args = -l -r -A -S\n\2/' $FTP_FILE_CONF;
+            fi
+       done
+    else
+        echo "未找到ftp相关配置文件，请手动检查/etc/xinetd.d/下是否存在ftp配置文件"
+        return 1;
+    fi
+
+    Var=`grep "^ftp" /etc/syslog.conf|wc -l`
+    
+    if [ -n $var ] ; then
+        echo "已加固"
+    else
+        echo "未加固，现在加固"
+        echo "ftp.*  /var/log/ftpd" >>/etc/syslog.conf
+    fi
+
+        
     Out_msg_end;
     return 0;
 }
 function Venus_Linux_49(){
     Out_msg_Venus 49 "fingerd服务";
+    
+    if [ -f /etc/xinetd.d/finger ] ; then
+        # /etc/xinetd.d/finger exist; 
+        Var=`grep disable /etc/xinetd.d/auth |awk -F"=" '{print $2}'|sed 's/^[[:space:]]*//'`
+        if [ $Var = "yes" ]; then
+            echo "已加固"
+        else
+            echo "未加固，现在修改"
+            sed 's/^.*disable.*=.*no.*/\tdisable\t\t= yes/g' /etc/xinetd.d/finger
+        fi
+    else
+        # /etc/xinetd.d/finger not exist;
+        echo "[warn]/etc/xinetd.d/finger not exist,无法加固"
+    fi
 
     Out_msg_end;
     return 0;
 }
 function Venus_Linux_52(){
     Out_msg_Venus 52 "更改主机解析地址的顺序";
+    
+    CONF_FILE=/etc/host.conf
+
+    Chk_Conf_Backup $CONF_FILE;
+
+    Var=`awk '$0~/order.*hosts.*bind.*/' $CONF_FILE|wc -l `
+
+        if [ -n $var ] ; then
+            echo "已加固"
+        else
+            echo "未加固,现在修改"
+            echo "order hosts，bind" >>$CONF_FILE;
+            echo "multi on" >>$CONF_FILE
+            echo "nospoof on" >>$CONF_FILE
+                fi
 
     Out_msg_end;
     return 0;
@@ -432,17 +519,57 @@ function Venus_Linux_52(){
 function Venus_Linux_53(){
     Out_msg_Venus 53 "打开syncookie缓解syn flood攻击";
 
+    $CONF_FILE=/etc/sysctl.conf
+    Chk_Conf_Backup $CONF_FILE
+    Var=`cat /proc/sys/net/ipv4/tcp_syncookies`
+    
+    if [ $Var -ne 1 ] ; then
+        echo "未加固，现在修改"
+        echo "net.ipv4.tcp_syncookies = 1">>$CONF_FILE
+        /sbin/sysctl -p
+    else
+        echo "已加固";
+            fi
+
     Out_msg_end;
     return 0;
 }
 function Venus_Linux_54(){
     Out_msg_Venus 54 "不响应ICMP请求";
 
+     Var=`cat /proc/sys/net/ipv4/icmp_echo_ignore_all`
+    
+        if [ $Var -ne 0 ] ; then
+            echo "已加固"
+        else
+            echo "未加固，现在加固"
+            echo "net.ipv4.icmp_echo_ignore_all = 1" >> /etc/sysctl.conf
+            /sbin/sysctl -p
+                fi
+
     Out_msg_end;
     return 0;
 }
 function Venus_Linux_55(){
     Out_msg_Venus 55 "禁止IP源路由";
+    
+    CONF_FILE=/etc/sysctl.conf
+    Chk_Conf_Backup $CONF_FILE; 
+    Var=`/sbin/sysctl -a |awk -F"=" '$1~/accept_source_route/{print $2}'|sed 's/^[[:space:]]*//'`
+    for i in $Var
+    do
+        Sum=`expr $Sum + $i`
+    done
+    
+    if [ $Sum -ne 0 ] ; then
+        echo "未加固，现在修改"
+        
+        for i in `/sbin/sysctl -a |awk -F"=" '$1~/accept_source_route/{print $1}'` ; do
+            echo $i" = 0" >>$CONF_FILE
+        done
+    else
+        echo "已加固"
+    fi
 
     Out_msg_end;
     return 0;
