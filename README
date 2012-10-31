@@ -1,4 +1,8 @@
-﻿此脚本根据《Linux系统安全配置规范V1.1.doc》编写。
+﻿此脚本根据《Linux系统安全配置规范V1.1.doc》(压缩包内)编写。
 如有错误请查阅该文档。
+
+Venus.sh根据《基线检查情况_linux部份.xlsx》(压缩包内)编写
+
+只需要执行bash.sh文件即可。
 
 by lianghuiqiang 2012/10/23
