@@ -105,15 +105,14 @@ function Venus_Linux_4(){
     Out_msg_Venus 4 "root帐号shell变量信息检查";
     Chk_Conf_Backup /etc/passwd
         SHELL_PATH=$(which bash) ; 
-        if [ $SHELL_PATH -ne `awk -F ":" '$1~/^root$/{print $7}' /etc/passwd` ] ; then
-            echo "root帐号shell为"`awk -F ":" '$1~/^root$/{print $7}' /etc/passwd`;
+        PASSWD_ROOT_PATH=`awk -F ":" '$1~/^root$/{print $7}' /etc/passwd`
+        if [ $SHELL_PATH -ne $PASSWD_ROOT_PATH ] ; then
+            echo "root帐号shell为"$PASSWD_ROOT_PATH;
             echo "现在修改为$SHELL_PATH";
             /usr/sbin/usermod -s $SHELL_PATH root
         else
             echo "已加固";
-                fifor i in `/sbin/sysctl -a |awk -F"=" '$1~/accept_source_route/{print $1}'` ; do
-            echo $i" = 0"
-        done
+                fi
     Out_msg_end;
     return 0;
 }
@@ -331,7 +330,8 @@ function Venus_Linux_22(){
     Out_msg_Venus 22 "禁止使用ftp的帐号检查";
     Chk_Conf_Backup /etc/vsftpd/ftpusers
     Chk_Conf_Backup /etc/vsftpd.ftpusers
-    if [ -f /etc/vsftpd.ftpusers] ; then
+
+    if [ -f /etc/vsftpd.ftpusers ] ; then
         Var=`cat /etc/vsftpd.ftpusers|wc -l` 
         if [ $Var -ne 0 ] ; then
             echo "已加固"
@@ -376,13 +376,13 @@ function Venus_Linux_33(){
 
     CONF_FILE=/etc/host.conf
     Chk_Conf_Backup $CONF_FILE;
-    Var=`grep "order hosts,bind" $CONF_FILE`
-
-        if [ -z $Var ] ; then
+    Var=`grep "order hosts,bind" $CONF_FILE |wc -l`
+    
+        if [ $Var -ne 0 ] ; then
+            echo "已加固"
+        else
             echo "未加固，现在修改$CONF_FILE文件"
             echo "order hosts,bind">> $CONF_FILE;
-        else
-            echo "已加固"
                 fi
 
     Out_msg_end;
@@ -450,11 +450,11 @@ function Venus_Linux_48(){
        
        for FTP_FILE_CONF in $LOOP; do
             VAR_FF=`awk '/^[^#].*server_args/&&/-l/&&/-r/&&/-A/&&/-S/' $FTP_FILE_CONF|wc -l`
-            if [ $VAR_FF -n 0] ; then
+            if [ $VAR_FF -ne 0 ] ; then
                 echo "$FTP_FILE_CONF已加固"
             else
                 echo "$FTP_FILE_CONF未加固,现在修改"
-                sed -r ':a;N;$!ba;s/(.*\n)(.*})/\1server_args = -l -r -A -S\n\2/' $FTP_FILE_CONF;
+                sed -ir ':a;N;$!ba;s/(.*\n)(.*})/\1server_args = -l -r -A -S\n\2/' $FTP_FILE_CONF;
             fi
        done
     else
@@ -519,7 +519,7 @@ function Venus_Linux_52(){
 function Venus_Linux_53(){
     Out_msg_Venus 53 "打开syncookie缓解syn flood攻击";
 
-    $CONF_FILE=/etc/sysctl.conf
+    CONF_FILE=/etc/sysctl.conf
     Chk_Conf_Backup $CONF_FILE
     Var=`cat /proc/sys/net/ipv4/tcp_syncookies`
     
@@ -575,3 +575,190 @@ function Venus_Linux_55(){
     return 0;
 }
 
+function Venus_Linux_58(){
+    Out_msg_Venus 58 "apache和dhcp服务检查"
+    
+    RUN_LEVEL=`sed '/^#/'d /etc/inittab | sed -n '/^id/'p | awk -F: '{print $2}'`
+    APACHE_STATUS=`find  /etc/rc.d/rc"$RUN_LEVEL".d -name "S*httpd*"|wc -l`
+
+    if [ $APACHE_STATUS -ne 0 ] ; then
+        echo "apache未加固,现在修改";
+        /sbin/chkconfig --level $RUN_LEVEL httpd off
+    else
+        echo "apache已加固";
+    fi
+
+    DHCPD_STATUS=`find  /etc/rc.d/rc"$RUN_LEVEL".d -name "S*DHCPDd*"|wc -l`
+    if [ $APACHE_STATUS -ne 0 ] ; then
+        echo "dhcpd未加固,现在修改";
+        /sbin/chkconfig --level $RUN_LEVEL dhcpd off
+    else
+        echo "dhcpd已加固";
+    fi
+
+
+    Out_msg_end;
+    return 0;
+}
+
+function Venus_Linux_59(){
+    Out_msg_Venus 59 "初始文件创建权限"
+
+        CONF_FILE=/etc/profile
+	Chk_Conf_Backup $CONF_FILE;
+	Var=`awk '$1~/umask/&&$2~/077/' $CONF_FILE`
+	
+	if [ -z "$Var" ]
+		then
+			echo -e "未设置用户UMASK值\n现在设置......";
+			echo "umask 077" >> $CONF_FILE;
+	else
+			echo "已设置用户UMASK值";
+
+	fi
+
+    Out_msg_end;
+    return 0;
+}
+
+function Venus_Linux_60(){
+    Out_msg_Venus 60 "设置关键文件的属性"
+    
+        if [ -f /var/log/message ] ; then
+            Var=`lsattr /var/log/messages |awk '$1~/i/'|wc -l `
+            
+                if [ $Var -ne 1 ] ; then
+                    echo "未加固，现在修改"
+                    /usr/bin/chattr +a /var/log/messages
+                else
+                    echo "/var/log/messages已加固"
+                        fi
+        else
+            echo "/var/log/messages文件不存在，不作修改";
+                fi
+
+        Var=`ls -l /var/log/messages.*|wc -l`
+        
+        if [ $Var -ne 0 ] ; then
+            Var2=`/usr/bin/lsattr /var/log/messages.* |wc -l`
+            
+                if [ $Var2 -ne $Var ] ; then
+                    echo "未加固,现在修改"
+                    /usr/bin/chattr +i /var/log/messages.* 2>/dev/null
+                else
+                    echo "已加固"
+                        fi
+        else
+            echo "/var/log/messages.*文件不存在，不作修改"
+                fi
+    
+
+    Out_msg_end;
+    return 0;
+}
+
+function Venus_Linux_73(){
+    Out_msg_Venus 73 "对ssh、su登录日志进行记录"
+
+    SYSLOG_CONF_FILE=/etc/syslog.conf
+    Chk_Conf_Backup $SYSLOG_CONF_FILE
+
+    Var=`grep "^authpriv\.\*" /etc/syslog.conf|wc -l`
+
+    if [ $Var -ne 0 ] ; then
+        echo "已加固"
+    else
+        echo "未加固，现在加固"
+        echo "# The authpriv file has restricted access" >> $SYSLOG_CONF_FILE
+        echo "authpriv.*    /var/log/secure">> $SYSLOG_CONF_FILE
+        /etc/rc.d/init.d/syslog restart
+            fi
+
+    Out_msg_end;
+    return 0;
+}
+
+function Venus_Linux_76(){
+    Out_msg_Venus 76 "指定专用的syslog服务器记录日志"
+
+    echo "此项加固需手动修改："
+    echo "需要提供日志服务器IP地址"
+    echo -e "在/etc/syslog.conf文件中，\n增加syslog服务器IP地址设置：*.*\t\tsyslogserver_IPaddress，\n其中syslogserver_IPaddress是一个syslog服务器的IP地址\n并重启syslog服务，/etc/rc.d/init.d/syslog restart"
+
+    Out_msg_end;
+    return 0;
+}
+
+function Venus_Linux_81(){
+    Out_msg_Venus 81 "隐藏系统提示信息"
+    Chk_Conf_Backup /etc/rc.d/rc.local;
+    Chk_Conf_Backup /etc/issue
+    Chk_Conf_Backup /etc/issue.net
+
+    Var=`awk '$3~/issue/' /etc/rc.d/rc.local|wc -l`
+
+    if [ $Var -ne 2 ] ; then
+        echo "未加固，现在修改"
+        echo "echo > /etc/issue" >> /etc/rc.d/rc.local
+        echo "echo > /etc/issue.net" >> /etc/rc.d/rc.local
+        echo > /etc/issue
+        echo > /etc/issue.net
+    else
+        echo "已加固"
+            fi
+
+    Out_msg_end;
+    return 0;
+}
+
+function Venus_Linux_82(){
+    Out_msg_Venus 82 "禁止Control-Alt-Delete键盘关闭命令"
+    INIT_CONF_FILE=/etc/inittab
+    Chk_Conf_Backup $INIT_CONF_FILE
+
+    Var=`grep "^ca::ctrlaltdel:/sbin/shutdown" /etc/inittab |wc -l`
+    if [ $Var -ne 0 ] ; then
+        echo "未加固,现在修改";
+        sed -i 's/^ca\:\:ctrlaltdel\:\/sbin\/shutdown/#&/g' $INIT_CONF_FILE 
+        /sbin/init q
+
+    else
+        echo "已加固";
+            fi
+
+    
+
+    Out_msg_end;
+    return 0;
+}
+
+function Venus_Linux_86(){
+    Out_msg_Venus 86 "core dump 状态"
+
+    Chk_Conf_Backup /etc/profile
+
+    Var=` ulimit -a|awk '/core file size/{print $6}'`
+
+    if [ $Var -ne 0 ] ; then
+        echo "未加固，现在修改"
+        echo "ulimit -c 0" >> /etc/profile
+    else
+        echo "已加固"
+            fi
+    
+
+    Out_msg_end;
+    return 0;
+}
+
+function Venus_Linux_88(){
+    Out_msg_Venus 88 "第三方安全产品ssh安装情况"
+    
+    echo "检查已安装的ssh组件"
+    rpm -qa | grep ssh 
+    echo "检查当前ssh版本"
+    ssh -V
+
+    Out_msg_end;
+    return 0;
+}

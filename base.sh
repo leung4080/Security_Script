@@ -593,6 +593,20 @@ do
     Check_Linux_$i;
 done
 
+. ./Venus.sh 
+
+for i in `awk -F"[ (_]" '/function\ Venus/{print $4}' ./Venus.sh `
+do
+
+if [ $i -ne 38 ] && [ $i -ne 54 ]  ; then
+    Venus_Linux_$i;
+else
+    echo "Venus_Linux_$i项有风险较大，不修改"
+fi
+        
+done
+
+
 echo "完成初始化。请重启操作系统reboot"
 
 exit 0;
