@@ -15,9 +15,9 @@ function Out_msg_Venus(){
 
 
 
-#=========================å¯æ˜æ˜Ÿè¾°==========================
+#=========================ÆôÃ÷ĞÇ³½==========================
 function Venus_Linux_1(){
-    Out_msg_Venus 1 "å»é™¤ä¸éœ€è¦çš„å¸å·ã€ä¿®æ”¹é»˜è®¤å¸å·çš„shellå˜é‡"
+    Out_msg_Venus 1 "È¥³ı²»ĞèÒªµÄÕÊºÅ¡¢ĞŞ¸ÄÄ¬ÈÏÕÊºÅµÄshell±äÁ¿"
 
     Chk_Conf_Backup /etc/passwd
     DEL_USER="lp sync shutdown halt  operator games gopher"
@@ -25,11 +25,11 @@ function Venus_Linux_1(){
     do
 	    if [ `grep -E "^\<$i\>" /etc/passwd|wc -l ` -ne 0 ]
 	    then
-		    echo "ç”¨æˆ·$iå­˜åœ¨ï¼Œç°åœ¨åˆ é™¤ã€‚"
+		    echo "ÓÃ»§$i´æÔÚ£¬ÏÖÔÚÉ¾³ı¡£"
 		    /usr/sbin/userdel $i;
-		    echo "ç”¨æˆ·$iå·²åˆ é™¤";
+		    echo "ÓÃ»§$iÒÑÉ¾³ı";
 	    else
-		    echo "ç”¨æˆ·$iå·²åˆ é™¤,æ— éœ€ä¿®æ”¹ã€‚"
+		    echo "ÓÃ»§$iÒÑÉ¾³ı,ÎŞĞèĞŞ¸Ä¡£"
 	    fi
     done
 
@@ -37,16 +37,16 @@ function Venus_Linux_1(){
     for i in $NOLOGIN_USER; 
     do  
         echo "check username: "$i;
-        awk -F: '{if ( $1=="'$i'" && $7!~/\/sbin\/nologin|\/bin\/sync|\/sbin\/shutdown|\/sbin\/halt|\/bin\/false/  ){print "echo \"ç°åœ¨ä¿®æ”¹ç”¨æˆ·"'$i'"çš„ç™»é™†åŸŸ\";usermod -s /sbin/nologin "$1}}' /etc/passwd|bash 
+        awk -F: '{if ( $1=="'$i'" && $7!~/\/sbin\/nologin|\/bin\/sync|\/sbin\/shutdown|\/sbin\/halt|\/bin\/false/  ){print "echo \"ÏÖÔÚĞŞ¸ÄÓÃ»§"'$i'"µÄµÇÂ½Óò\";usermod -s /sbin/nologin "$1}}' /etc/passwd|bash 
     done  
 
-    echo "å·²åŠ å›º"
+    echo "ÒÑ¼Ó¹Ì"
     Out_msg_end;
     return 0;
 }
 
 function Venus_Linux_2 (){
-    Out_msg_Venus 2 "passwdæ–‡ä»¶æ£€æŸ¥"
+    Out_msg_Venus 2 "passwdÎÄ¼ş¼ì²é"
 
     Chk_Conf_Backup /etc/passwd
     Chk_Conf_Backup /etc/shadow
@@ -59,16 +59,16 @@ if [ $CHECK_SHADOW_NUM -ne $CHECK_PASSWD_NUM ] ; then
     if [ -n $NOSHADOW_USER ] 
     then
         for i in $NOSHADOW_USER; do
-            echo "$iç”¨æˆ·å¼‚å¸¸ï¼Œå°†åˆ é™¤åé‡å»ºï¼Œå¯†ç è®¾ç½®ä¸ºä¸â€œ"$i"_2012â€æ ¼å¼ã€‚"
+            echo "$iÓÃ»§Òì³££¬½«É¾³ıºóÖØ½¨£¬ÃÜÂëÉèÖÃÎªÓë¡°"$i"_2012¡±¸ñÊ½¡£"
                  /usr/sbin/userdel $i
                  /usr/sbin/useradd $i
                  echo $i"_2012"| /usr/bin/passwd $i --stdin
             done
     else
-        echo "å·²åŠ å›º"
+        echo "ÒÑ¼Ó¹Ì"
     fi
  else
-        echo -e "[error] /etc/passwdæ–‡ä»¶æ£€æŸ¥å‡ºé”™ï¼Œè·³è¿‡è‡ªåŠ¨æ£€æŸ¥\nè¯·æ‰‹åŠ¨æ£€æŸ¥ç³»ç»Ÿæ˜¯å¦å¯ç”¨shadowå¯†ç "
+        echo -e "[error] /etc/passwdÎÄ¼ş¼ì²é³ö´í£¬Ìø¹ı×Ô¶¯¼ì²é\nÇëÊÖ¶¯¼ì²éÏµÍ³ÊÇ·ñÆôÓÃshadowÃÜÂë"
         return 1;
 fi
 
@@ -77,7 +77,7 @@ fi
 }
 
 function Venus_Linux_3(){
-    Out_msg_Venus 3 "shadowæ–‡ä»¶æ£€æŸ¥";
+    Out_msg_Venus 3 "shadowÎÄ¼ş¼ì²é";
 
     Chk_Conf_Backup /etc/passwd
     Chk_Conf_Backup /etc/shadow
@@ -89,101 +89,101 @@ function Venus_Linux_3(){
         for loop in $no_pwd_users
             do
             if [ "$loop" = "$user" ]; then
-                echo "$useræœªè®¾ç½®å¯†ç ï¼Œç°åœ¨ä¿®æ”¹å¯†ç ä¸ºâ€œ"$user"_2012â€"
+                echo "$userÎ´ÉèÖÃÃÜÂë£¬ÏÖÔÚĞŞ¸ÄÃÜÂëÎª¡°"$user"_2012¡±"
 	            echo $user"_2012" |/usr/bin/passwd --stdin  $user 
             fi
         done
     done
     
-    echo "å·²åŠ å›º"
+    echo "ÒÑ¼Ó¹Ì"
 
     Out_msg_end;
     return 0;
 }
 
 function Venus_Linux_4(){
-    Out_msg_Venus 4 "rootå¸å·shellå˜é‡ä¿¡æ¯æ£€æŸ¥";
+    Out_msg_Venus 4 "rootÕÊºÅshell±äÁ¿ĞÅÏ¢¼ì²é";
     Chk_Conf_Backup /etc/passwd
         SHELL_PATH=$(which bash) ; 
         PASSWD_ROOT_PATH=`awk -F ":" '$1~/^root$/{print $7}' /etc/passwd`
-        if [ $SHELL_PATH -ne $PASSWD_ROOT_PATH ] ; then
-            echo "rootå¸å·shellä¸º"$PASSWD_ROOT_PATH;
-            echo "ç°åœ¨ä¿®æ”¹ä¸º$SHELL_PATH";
+        if [ "$SHELL_PATH" != "$PASSWD_ROOT_PATH" ] ; then
+            echo "rootÕÊºÅshellÎª"$PASSWD_ROOT_PATH;
+            echo "ÏÖÔÚĞŞ¸ÄÎª$SHELL_PATH";
             /usr/sbin/usermod -s $SHELL_PATH root
         else
-            echo "å·²åŠ å›º";
+            echo "ÒÑ¼Ó¹Ì";
                 fi
     Out_msg_end;
     return 0;
 }
 
 function Venus_Linux_5(){
-    Out_msg_Venus 5 "ç¦ç”¨ä¸éœ€è¦çš„è´¦å·";
+    Out_msg_Venus 5 "½ûÓÃ²»ĞèÒªµÄÕËºÅ";
     Chk_Conf_Backup /etc/passwd;
     Chk_Conf_Backup /etc/shadow;
 
     echo "do nothing!"
-    echo "Venus_Linux_1é¡¹å·²åŠ å›º"
+    echo "Venus_Linux_1ÏîÒÑ¼Ó¹Ì"
         
     Out_msg_end;
     return 0;
 }
 function Venus_Linux_9(){
-    Out_msg_Venus 9 "ç³»ç»Ÿuid=0å¸å·ä¿¡æ¯æ£€æŸ¥";
+    Out_msg_Venus 9 "ÏµÍ³uid=0ÕÊºÅĞÅÏ¢¼ì²é";
     Chk_Conf_Backup /etc/passwd
         if [ `awk -F: '{if($3==0&&$1!="root") print $1}' /etc/passwd|wc -l`  -ne 0 ] ;then
-            echo "å­˜åœ¨UIDä¸º0ï¼ˆérootï¼‰çš„ç”¨æˆ·ï¼Œå°†åˆ é™¤ç”¨æˆ·"
+            echo "´æÔÚUIDÎª0£¨·Çroot£©µÄÓÃ»§£¬½«É¾³ıÓÃ»§"
             WARN_USER=`awk -F: '{if($3==0&&$1!="root") print $1}' /etc/passwd`
             
             for i in $WARN_USER; do
-                    echo $i"ç”¨æˆ·UIDä¸º0ï¼Œåˆ é™¤æ­¤ç”¨æˆ·"
+                    echo $i"ÓÃ»§UIDÎª0£¬É¾³ı´ËÓÃ»§"
                     /usr/sbin/userdel $i;
                 done
         else
-            echo "å·²åŠ å›º"
+            echo "ÒÑ¼Ó¹Ì"
         fi
 
     Out_msg_end;
     return 0;
 }
 function Venus_Linux_10(){
-    Out_msg_Venus 10 "ä½¿root PATHç¯å¢ƒå˜é‡ä¸­ä¸åŒ…å«å½“å‰ç›®å½•";
+    Out_msg_Venus 10 "Ê¹root PATH»·¾³±äÁ¿ÖĞ²»°üº¬µ±Ç°Ä¿Â¼";
     Chk_Conf_Backup /etc/profile
     if [ -z "`env |awk -F "=" '$1~/^PATH$/{print $2}'|awk -F ":" '{for ( i=1;i<=NF;i++) if($i=="."){print $i}}'`" ];then
-        echo "rootç”¨æˆ·ç¯å¢ƒå˜é‡ä¸­åŒ…å«å½“å‰ç›®å½•ï¼Œæ£€æŸ¥/etc/profileæ–‡ä»¶:"
+        echo "rootÓÃ»§»·¾³±äÁ¿ÖĞ°üº¬µ±Ç°Ä¿Â¼£¬¼ì²é/etc/profileÎÄ¼ş:"
         
             if [ -z `cat /etc/profile|awk -F "=" '$1~/^PATH$/{print $2}'|awk -F ":" '{for ( i=1;i<=NF;i++) if($i=="."){print $i}}'`]  ; then
-                echo "ç°åœ¨ä¿®æ”¹/etc/profileæ–‡ä»¶"
+                echo "ÏÖÔÚĞŞ¸Ä/etc/profileÎÄ¼ş"
                 sed -i '/[ ^]PATH=/s/\.://g' /etc/profile
-                echo "å·²åŠ å›ºï¼Œéœ€é‡æ–°ç™»é™†æ‰èƒ½ç”Ÿæ•ˆ"
+                echo "ÒÑ¼Ó¹Ì£¬ĞèÖØĞÂµÇÂ½²ÅÄÜÉúĞ§"
             else
-                echo "/etc/profileæ­£ç¡®ï¼Œå·²åŠ å›ºï¼Œè¯·é‡æ–°ç™»é™†å†æ£€æŸ¥"
+                echo "/etc/profileÕıÈ·£¬ÒÑ¼Ó¹Ì£¬ÇëÖØĞÂµÇÂ½ÔÙ¼ì²é"
                     fi
     else
-        echo "å·²åŠ å›º"
+        echo "ÒÑ¼Ó¹Ì"
     fi
         
     Out_msg_end;
     return 0;
 }
 function Venus_Linux_11(){
-    Out_msg_Venus 11 "å¯¹rootä¸ºlsã€rmè®¾ç½®åˆ«å";
+    Out_msg_Venus 11 "¶ÔrootÎªls¡¢rmÉèÖÃ±ğÃû";
 
     ROOT_SHELL_FILE=~/.`basename $SHELL`rc
 
     Var=`grep "alias ls=" $ROOT_SHELL_FILE|head -1`
     if [ -n "$Var" ] ; then
-        echo "å·²åŠ å›º"
+        echo "ÒÑ¼Ó¹Ì"
     else
-        echo "æœªæ·»åŠ lså‘½ä»¤åˆ«å,ç°åœ¨ä¿®æ”¹"
+        echo "Î´Ìí¼ÓlsÃüÁî±ğÃû,ÏÖÔÚĞŞ¸Ä"
         echo "alias ls='ls -aol --color=tty'" >> $ROOT_SHELL_FILE
         alias ls='ls -aol --color=tty'
             fi
     Var=`grep "alias rm=" $ROOT_SHELL_FILE|head -1`
     if [ -n "$Var" ] ; then
-        echo "å·²åŠ å›º"
+        echo "ÒÑ¼Ó¹Ì"
     else
-        echo "æœªæ·»åŠ rmå‘½ä»¤åˆ«å,ç°åœ¨ä¿®æ”¹"
+        echo "Î´Ìí¼ÓrmÃüÁî±ğÃû,ÏÖÔÚĞŞ¸Ä"
             echo "alias rm='rm -i'" >> $ROOT_SHELL_FILE
             alias rm='rm -i'
             fi
@@ -191,15 +191,15 @@ function Venus_Linux_11(){
     return 0;
 }
 function Venus_Linux_12(){
-    Out_msg_Venus 12 "ç¼ºçœå¯†ç é•¿åº¦é™åˆ¶";
+    Out_msg_Venus 12 "È±Ê¡ÃÜÂë³¤¶ÈÏŞÖÆ";
     Chk_Conf_Backup /etc/login.defs
 Var=`awk '$0~/^PASS_MIN_LEN/{print $2}'  /etc/login.defs`
 	
     if [ $Var -ge 8 ] 
     then
-       echo "å·²é™åˆ¶ç”¨æˆ·å¯†ç é•¿åº¦";
+       echo "ÒÑÏŞÖÆÓÃ»§ÃÜÂë³¤¶È";
     else
-        echo "æœªé™åˆ¶ç”¨æˆ·å¯†ç é•¿åº¦";
+        echo "Î´ÏŞÖÆÓÃ»§ÃÜÂë³¤¶È";
 		sed -i "s/^PASS_MIN_LEN\ *.*$/#&/" /etc/login.defs
 		echo "PASS_MIN_LEN	8" >>/etc/login.defs
     fi
@@ -208,33 +208,33 @@ Var=`awk '$0~/^PASS_MIN_LEN/{print $2}'  /etc/login.defs`
     return 0;
 }
 function Venus_Linux_13(){
-    Out_msg_Venus 13 "å¯†ç æœ€å¤§æœ‰æ•ˆå¤©æ•°";
+    Out_msg_Venus 13 "ÃÜÂë×î´óÓĞĞ§ÌìÊı";
     Chk_Conf_Backup /etc/login.defs
 
-		Var=`awk '$0~/^PASS_MAX_DAYS/{print $2}'  /tmp/login.defs`
+		Var=`awk '$0~/^PASS_MAX_DAYS/{print $2}'  /etc/login.defs`
 
 		if [ "$Var" == "90" ]
 			then
-				echo -e "å·²é™åˆ¶å¸å·å¯†ç é™æœŸä¸º90å¤©\nä¸ä½œä¿®æ”¹";
+				echo -e "ÒÑÏŞÖÆÕÊºÅÃÜÂëÏŞÆÚÎª90Ìì\n²»×÷ĞŞ¸Ä";
         	else
-			    echo -e "æœªé™åˆ¶å¸å·å¯†ç é™æœŸä¸º90å¤©\nç°åœ¨è¿›è¡Œä¿®æ”¹......";
-                sed  -i "s/^PASS_MAX_DAYS\ *.*$/#&\nPASS_MAX_DAYS 90/" /tmp/login.defs
+			    echo -e "Î´ÏŞÖÆÕÊºÅÃÜÂëÏŞÆÚÎª90Ìì\nÏÖÔÚ½øĞĞĞŞ¸Ä......";
+                sed  -i "s/^PASS_MAX_DAYS\ *.*$/#&\nPASS_MAX_DAYS 90/" /etc/login.defs
 		fi
 
     Out_msg_end;
     return 0;
 }
 function Venus_Linux_14(){
-    Out_msg_Venus 14 "å¯†ç æœ€å°æœ‰æ•ˆå¤©æ•°";
+    Out_msg_Venus 14 "ÃÜÂë×îĞ¡ÓĞĞ§ÌìÊı";
     Chk_Conf_Backup /etc/login.defs
-		Var=`awk '$0~/^PASS_MIN_DAYS/{print $2}'  /tmp/login.defs`
+		Var=`awk '$0~/^PASS_MIN_DAYS/{print $2}'  /etc/login.defs`
 
 		if [ "$Var" == "10" ]
 			then
-				echo -e "å·²é™åˆ¶å¸å·å¯†ç æœ€å°é™æœŸä¸º10å¤©\nä¸ä½œä¿®æ”¹";
+				echo -e "ÒÑÏŞÖÆÕÊºÅÃÜÂë×îĞ¡ÏŞÆÚÎª10Ìì\n²»×÷ĞŞ¸Ä";
         	else
-			    echo -e "æœªé™åˆ¶å¸å·å¯†ç æœ€å°é™æœŸä¸º10å¤©\nç°åœ¨è¿›è¡Œä¿®æ”¹......";
-                sed  -i "s/^PASS_MIN_DAYS\ *.*$/#&\nPASS_MIN_DAYS 10/" /tmp/login.defs
+			    echo -e "Î´ÏŞÖÆÕÊºÅÃÜÂë×îĞ¡ÏŞÆÚÎª10Ìì\nÏÖÔÚ½øĞĞĞŞ¸Ä......";
+                sed  -i "s/^PASS_MIN_DAYS\ *.*$/#&\nPASS_MIN_DAYS 10/" /etc/login.defs
 		fi
 
 
@@ -242,17 +242,17 @@ function Venus_Linux_14(){
     return 0;
 }
 function Venus_Linux_15(){
-    Out_msg_Venus 15 "å¯†ç è¿‡æœŸæå‰è­¦å‘Šå¤©æ•°";
+    Out_msg_Venus 15 "ÃÜÂë¹ıÆÚÌáÇ°¾¯¸æÌìÊı";
     Chk_Conf_Backup /etc/login.defs
 
-	Var=`awk '$0~/^PASS_WARN_AGE/{print $2}'  /tmp/login.defs`
+	Var=`awk '$0~/^PASS_WARN_AGE/{print $2}'  /etc/login.defs`
 
 		if [ "$Var" == "5" ]
 			then
-				echo -e "å·²ä¿®æ”¹å¯†ç è¿‡æœŸæå‰è­¦å‘Šå¤©æ•°ä¸º5å¤©\nä¸ä½œä¿®æ”¹";
+				echo -e "ÒÑĞŞ¸ÄÃÜÂë¹ıÆÚÌáÇ°¾¯¸æÌìÊıÎª5Ìì\n²»×÷ĞŞ¸Ä";
         	else
-			    echo -e "æœªä¿®æ”¹å¯†ç è¿‡æœŸæå‰è­¦å‘Šå¤©æ•°ä¸º5å¤©\nç°åœ¨è¿›è¡Œä¿®æ”¹......";
-                sed  -i "s/^PASS_WARN_AGE\ *.*$/#&\nPASS_WARN_AGE 5/" /tmp/login.defs
+			    echo -e "Î´ĞŞ¸ÄÃÜÂë¹ıÆÚÌáÇ°¾¯¸æÌìÊıÎª5Ìì\nÏÖÔÚ½øĞĞĞŞ¸Ä......";
+                sed  -i "s/^PASS_WARN_AGE\ *.*$/#&\nPASS_WARN_AGE 5/" /etc/login.defs
 		fi
 
 
@@ -260,25 +260,25 @@ function Venus_Linux_15(){
     return 0;
 }
 function Venus_Linux_16(){
-    Out_msg_Venus 16 "è¶…æ—¶è‡ªåŠ¨æ³¨é”€ç™»å½•";
+    Out_msg_Venus 16 "³¬Ê±×Ô¶¯×¢ÏúµÇÂ¼";
 
     Chk_Conf_Backup /etc/profile
     Chk_Conf_Backup  /etc/environment
     Chk_Conf_Backup /etc/security/.profile
     Var=`env |awk -F"=" '$1~/TIME/{print $2}'` 
             if  [ "$Var" -ge 120 ] && [ "$Var" != "0"]; then
-                echo "å·²åŠ å›º"
+                echo "ÒÑ¼Ó¹Ì"
             else
                 Var2=`grep "^TMOUT=120" /etc/profile|head -1 |awk -F"=" '{print $1}'`
                     
                     if [ -z $Var2 ] ; then
-                        echo "æœªåŠ å›ºï¼Œç°åœ¨ä¿®æ”¹/etc/profileï¼Œetc/environmentï¼Œ/etc/security/.profileæ–‡ä»¶";            
+                        echo "Î´¼Ó¹Ì£¬ÏÖÔÚĞŞ¸Ä/etc/profile£¬etc/environment£¬/etc/security/.profileÎÄ¼ş";            
                 echo "TMOUT=120 ; TIMEOUT=120 ; export readonly TMOUT TIMEOUT" >> /etc/profile;
                 echo "TMOUT=120 ; TIMEOUT=120 ; export readonly TMOUT TIMEOUT" >> /etc/environment;
                 echo "TMOUT=120 ; TIMEOUT=120 ; export readonly TMOUT TIMEOUT" >> /etc/security/.profile;
 
                     else
-                        echo "å·²åŠ å›º"
+                        echo "ÒÑ¼Ó¹Ì"
                             fi
                             fi
 
@@ -286,29 +286,29 @@ function Venus_Linux_16(){
     return 0;
 }
 function Venus_Linux_19(){
-    Out_msg_Venus 19 "ä½¿ç”¨pasword shadowing";
+    Out_msg_Venus 19 "Ê¹ÓÃpasword shadowing";
     Chk_Conf_Backup /etc/passwd
     Chk_Conf_Backup /etc/shadow
     
     if [ -f /etc/shadow ] ; then
-        echo "å·²åŠ å›º"
+        echo "ÒÑ¼Ó¹Ì"
     else
-        echo "ç°åœ¨åŠ å›º"
+        echo "ÏÖÔÚ¼Ó¹Ì"
         /usr/sbin/pwconv
             fi
     Out_msg_end;
     return 0;
 }
 function Venus_Linux_20(){
-    Out_msg_Venus 20 "ä¿è¯bash shellä¿å­˜å°‘é‡çš„ï¼ˆæˆ–ä¸ä¿å­˜ï¼‰å‘½ä»¤";
+    Out_msg_Venus 20 "±£Ö¤bash shell±£´æÉÙÁ¿µÄ£¨»ò²»±£´æ£©ÃüÁî";
     Chk_Conf_Backup /etc/profile
     
     HFS=`grep "HISTFILESIZE=30" /etc/profile`
     HS=`grep "HISTSIZE=30" /etc/profile`
         if [ -n "$HFS" ] && [ -n "$HS" ] ; then
-            echo "å·²åŠ å›º";
+            echo "ÒÑ¼Ó¹Ì";
         else
-            echo "æœªåŠ å›ºï¼Œç°åœ¨ä¿®æ”¹/etc/profileæ–‡ä»¶"
+            echo "Î´¼Ó¹Ì£¬ÏÖÔÚĞŞ¸Ä/etc/profileÎÄ¼ş"
             echo -e "HISTFILESIZE=30\nHISTSIZE=30" >> /etc/profile
                 fi
 
@@ -317,27 +317,27 @@ function Venus_Linux_20(){
     return 0;
 }
 function Venus_Linux_21(){
-    Out_msg_Venus 21 "ä½¿ç”¨PAMç¦æ­¢ä»»ä½•äººsuä¸ºroot";
-    echo "[warnningï¼]æ­¤åŠ å›ºé¡¹å­˜åœ¨è¾ƒå¤§é£é™©ï¼Œå¦‚éœ€ä¿®æ”¹è¯·å‚è€ƒä»¥ä¸‹æ–¹æ³•ï¼Œæ‰‹åŠ¨é…ç½®ï¼š"
-    echo "1,å°†å…è®¸suåˆ°rootçš„ç”¨æˆ·æ·»åŠ åˆ°wheelç»„(i.eå°†testç”¨æˆ·æ·»åŠ åˆ°wheelç»„):#usermod -G wheel test"
-    echo "2,å¤‡ä»½/etc/pam.d/suæ–‡ä»¶"
-    echo "3,å°†/etc/pam.d/suæ–‡ä»¶ä¸­#auth           required        pam_wheel.so use_uidè¡Œçš„æ³¨é‡Šç¬¦â€œ#â€åˆ é™¤"
-    echo "4,ä½¿ç”¨å…¶å®ƒç”¨æˆ·suï¼ŒéªŒè¯é…ç½®æ˜¯å¦æˆåŠŸ"
+    Out_msg_Venus 21 "Ê¹ÓÃPAM½ûÖ¹ÈÎºÎÈËsuÎªroot";
+    echo "[warnning£¡]´Ë¼Ó¹ÌÏî´æÔÚ½Ï´ó·çÏÕ£¬ÈçĞèĞŞ¸ÄÇë²Î¿¼ÒÔÏÂ·½·¨£¬ÊÖ¶¯ÅäÖÃ£º"
+    echo "1,½«ÔÊĞísuµ½rootµÄÓÃ»§Ìí¼Óµ½wheel×é(i.e½«testÓÃ»§Ìí¼Óµ½wheel×é):#usermod -G wheel test"
+    echo "2,±¸·İ/etc/pam.d/suÎÄ¼ş"
+    echo "3,½«/etc/pam.d/suÎÄ¼şÖĞ#auth           required        pam_wheel.so use_uidĞĞµÄ×¢ÊÍ·û¡°#¡±É¾³ı"
+    echo "4,Ê¹ÓÃÆäËüÓÃ»§su£¬ÑéÖ¤ÅäÖÃÊÇ·ñ³É¹¦"
     Out_msg_end;
     return 0;
 }
 function Venus_Linux_22(){
-    Out_msg_Venus 22 "ç¦æ­¢ä½¿ç”¨ftpçš„å¸å·æ£€æŸ¥";
+    Out_msg_Venus 22 "½ûÖ¹Ê¹ÓÃftpµÄÕÊºÅ¼ì²é";
     Chk_Conf_Backup /etc/vsftpd/ftpusers
     Chk_Conf_Backup /etc/vsftpd.ftpusers
 
     if [ -f /etc/vsftpd.ftpusers ] ; then
         Var=`cat /etc/vsftpd.ftpusers|wc -l` 
         if [ $Var -ne 0 ] ; then
-            echo "å·²åŠ å›º"
+            echo "ÒÑ¼Ó¹Ì"
         fi
     else
-        echo "æœªåŠ å›ºï¼Œç°åœ¨ä¿®æ”¹ã€‚"
+        echo "Î´¼Ó¹Ì£¬ÏÖÔÚĞŞ¸Ä¡£"
         if [ -f /etc/vsftpd/ftpusers ] ; then
             cp /etc/vsftpd/ftpusers /etc/vsftpd.ftpusers
         else
@@ -348,40 +348,40 @@ function Venus_Linux_22(){
     return 0;
 }
 function Venus_Linux_32(){
-    Out_msg_Venus 32 "xinetd/inetdæœåŠ¡ä¿¡æ¯æ£€æŸ¥";
+    Out_msg_Venus 32 "xinetd/inetd·şÎñĞÅÏ¢¼ì²é";
 
-    INET=`rpm -qa | grep inet`
+    INET=`rpm -qa | grep xinetd`
     INET_NAME=`echo $INET|awk -F"-" '{print $1}'`
     if [ -z $INET ] ;then
-        echo "æœªå®‰è£…xinetdæˆ–inetdã€‚è¯·å…ˆå®‰è£…xinetdæˆ–inetdç»„ä»¶!"ï¼›
+        echo "Î´°²×°xinetd»òinetd¡£ÇëÏÈ°²×°xinetd»òinetd×é¼ş!"£»
         return 1;
     fi
     INET_SCRIPT=`rpm -ql $INET |grep "^/etc/rc.*inetd"`
     $INET_SCRIPT status;
     RETVAL=$?
     if [ $RETVAL -ne 0 ] ;then
-        echo "$INET_NAMEæœªå¯åŠ¨";
-        echo "ç°åœ¨å¯åŠ¨$INET_NAME"
+        echo "$INET_NAMEÎ´Æô¶¯";
+        echo "ÏÖÔÚÆô¶¯$INET_NAME"
         $INET_SCRIPT start ;
         /sbin/chkconfig $INET_NAME on
     else
-        echo "$INET_NAMEå·²å¯åŠ¨ï¼Œå·²åŠ å›º"
+        echo "$INET_NAMEÒÑÆô¶¯£¬ÒÑ¼Ó¹Ì"
     fi
     
     Out_msg_end;
     return 0;
 }
 function Venus_Linux_33(){
-    Out_msg_Venus 33 "/etc/host.confä¿¡æ¯æ£€æŸ¥";
+    Out_msg_Venus 33 "/etc/host.confĞÅÏ¢¼ì²é";
 
     CONF_FILE=/etc/host.conf
     Chk_Conf_Backup $CONF_FILE;
     Var=`grep "order hosts,bind" $CONF_FILE |wc -l`
     
         if [ $Var -ne 0 ] ; then
-            echo "å·²åŠ å›º"
+            echo "ÒÑ¼Ó¹Ì"
         else
-            echo "æœªåŠ å›ºï¼Œç°åœ¨ä¿®æ”¹$CONF_FILEæ–‡ä»¶"
+            echo "Î´¼Ó¹Ì£¬ÏÖÔÚĞŞ¸Ä$CONF_FILEÎÄ¼ş"
             echo "order hosts,bind">> $CONF_FILE;
                 fi
 
@@ -390,27 +390,28 @@ function Venus_Linux_33(){
 }
 
 function Venus_Linux_36(){
-    Out_msg_Venus 36 "ä¸åŒä¸»æœºé—´ä¿¡ä»»å…³ç³»æ£€æŸ¥";
+    Out_msg_Venus 36 "²»Í¬Ö÷»ú¼äĞÅÈÎ¹ØÏµ¼ì²é";
     CONF_FILE=/etc/hosts.equiv
-    Chk_Conf_Backup $CONF_FILE;
+
     if [ -f $CONF_FILE ] ;then
-        echo "æœªåŠ å›º,ç°åœ¨åˆ é™¤$CONF_FILEæ–‡ä»¶";
+        echo "Î´¼Ó¹Ì,ÏÖÔÚÉ¾³ı$CONF_FILEÎÄ¼ş";
+    	Chk_Conf_Backup $CONF_FILE; 
         rm -f $CONF_FILE;
     else
-        echo "å·²åŠ å›º"
+        echo "ÒÑ¼Ó¹Ì"
     fi
 
     Out_msg_end;
     return 0;
 }
 function Venus_Linux_38(){
-    Out_msg_Venus 38 "ç³»ç»Ÿpingå“åº”ä¿¡æ¯æ£€æŸ¥";
+    Out_msg_Venus 38 "ÏµÍ³pingÏìÓ¦ĞÅÏ¢¼ì²é";
     Var=`cat /proc/sys/net/ipv4/icmp_echo_ignore_all`
     
         if [ $Var -ne 0 ] ; then
-            echo "å·²åŠ å›º"
+            echo "ÒÑ¼Ó¹Ì"
         else
-            echo "æœªåŠ å›ºï¼Œç°åœ¨åŠ å›º"
+            echo "Î´¼Ó¹Ì£¬ÏÖÔÚ¼Ó¹Ì"
             echo "net.ipv4.icmp_echo_ignore_all = 1" >> /etc/sysctl.conf
             /sbin/sysctl -p
                 fi
@@ -419,28 +420,28 @@ function Venus_Linux_38(){
     return 0;
 }
 function Venus_Linux_40(){
-    Out_msg_Venus 40 "ç³»ç»Ÿæ˜¯å¦å®‰è£…ftpä¿¡æ¯æ£€æŸ¥";
+    Out_msg_Venus 40 "ÏµÍ³ÊÇ·ñ°²×°ftpĞÅÏ¢¼ì²é";
 
     Var=` rpm -qa | grep ftp|wc -l` 
     Var2=`ls /etc/xinetd.d/*ftp*|wc -l`
     
     if [ $Var -gt 0 ] && [ $Var2 -gt 0 ] ; then
-       echo "å·²åŠ å›º"
+       echo "ÒÑ¼Ó¹Ì"
     else
-       echo "æœªåŠ å›º,è¯·æ‰‹åŠ¨å®‰è£…ftpè½¯ä»¶"
+       echo "Î´¼Ó¹Ì,ÇëÊÖ¶¯°²×°ftpÈí¼ş"
     fi
 
     Out_msg_end;
     return 0;
 }
 function Venus_Linux_48(){
-    Out_msg_Venus 48 "ftpdæœåŠ¡";
+    Out_msg_Venus 48 "ftpd·şÎñ";
 
     Chk_Conf_Backup /etc/syslog.conf;
     if [ -f /etc/rc.d/init.d/xinetd ] ; then
         test 
     else
-        echo "xinetdå¯åŠ¨æ–‡ä»¶ä¸å­˜åœ¨ï¼Œè¯·æ£€æŸ¥xinetdæ˜¯å¦æ­£ç¡®å®‰è£…"
+        echo "xinetdÆô¶¯ÎÄ¼ş²»´æÔÚ£¬Çë¼ì²éxinetdÊÇ·ñÕıÈ·°²×°"
         return 1;
     fi
     
@@ -451,23 +452,24 @@ function Venus_Linux_48(){
        for FTP_FILE_CONF in $LOOP; do
             VAR_FF=`awk '/^[^#].*server_args/&&/-l/&&/-r/&&/-A/&&/-S/' $FTP_FILE_CONF|wc -l`
             if [ $VAR_FF -ne 0 ] ; then
-                echo "$FTP_FILE_CONFå·²åŠ å›º"
+                echo "$FTP_FILE_CONFÒÑ¼Ó¹Ì"
             else
-                echo "$FTP_FILE_CONFæœªåŠ å›º,ç°åœ¨ä¿®æ”¹"
-                sed -ir ':a;N;$!ba;s/(.*\n)(.*})/\1server_args = -l -r -A -S\n\2/' $FTP_FILE_CONF;
+                echo "$FTP_FILE_CONFÎ´¼Ó¹Ì,ÏÖÔÚĞŞ¸Ä"
+		sed -i 's/server_args.*/server_args\t= -l -r -A -S/' $FTP_FILE_CONF
+		#sed -i ':a;N;$!ba;s/(.*\n)(.*})/\1server_args = -l -r -A -S\n\2/' $FTP_FILE_CONF;
             fi
        done
     else
-        echo "æœªæ‰¾åˆ°ftpç›¸å…³é…ç½®æ–‡ä»¶ï¼Œè¯·æ‰‹åŠ¨æ£€æŸ¥/etc/xinetd.d/ä¸‹æ˜¯å¦å­˜åœ¨ftpé…ç½®æ–‡ä»¶"
+        echo "Î´ÕÒµ½ftpÏà¹ØÅäÖÃÎÄ¼ş£¬ÇëÊÖ¶¯¼ì²é/etc/xinetd.d/ÏÂÊÇ·ñ´æÔÚftpÅäÖÃÎÄ¼ş"
         return 1;
     fi
 
     Var=`grep "^ftp" /etc/syslog.conf|wc -l`
     
     if [ -n $var ] ; then
-        echo "å·²åŠ å›º"
+        echo "/etc/syslog.confÒÑ¼Ó¹Ì"
     else
-        echo "æœªåŠ å›ºï¼Œç°åœ¨åŠ å›º"
+        echo "/etc/syslog.confÎ´¼Ó¹Ì£¬ÏÖÔÚ¼Ó¹Ì"
         echo "ftp.*  /var/log/ftpd" >>/etc/syslog.conf
     fi
 
@@ -476,27 +478,27 @@ function Venus_Linux_48(){
     return 0;
 }
 function Venus_Linux_49(){
-    Out_msg_Venus 49 "fingerdæœåŠ¡";
+    Out_msg_Venus 49 "fingerd·şÎñ";
     
     if [ -f /etc/xinetd.d/finger ] ; then
         # /etc/xinetd.d/finger exist; 
         Var=`grep disable /etc/xinetd.d/auth |awk -F"=" '{print $2}'|sed 's/^[[:space:]]*//'`
         if [ $Var = "yes" ]; then
-            echo "å·²åŠ å›º"
+            echo "ÒÑ¼Ó¹Ì"
         else
-            echo "æœªåŠ å›ºï¼Œç°åœ¨ä¿®æ”¹"
+            echo "Î´¼Ó¹Ì£¬ÏÖÔÚĞŞ¸Ä"
             sed 's/^.*disable.*=.*no.*/\tdisable\t\t= yes/g' /etc/xinetd.d/finger
         fi
     else
         # /etc/xinetd.d/finger not exist;
-        echo "[warn]/etc/xinetd.d/finger not exist,æ— æ³•åŠ å›º"
+        echo "[warn]/etc/xinetd.d/finger not exist,ÎŞ·¨¼Ó¹Ì"
     fi
 
     Out_msg_end;
     return 0;
 }
 function Venus_Linux_52(){
-    Out_msg_Venus 52 "æ›´æ”¹ä¸»æœºè§£æåœ°å€çš„é¡ºåº";
+    Out_msg_Venus 52 "¸ü¸ÄÖ÷»ú½âÎöµØÖ·µÄË³Ğò";
     
     CONF_FILE=/etc/host.conf
 
@@ -505,10 +507,10 @@ function Venus_Linux_52(){
     Var=`awk '$0~/order.*hosts.*bind.*/' $CONF_FILE|wc -l `
 
         if [ -n $var ] ; then
-            echo "å·²åŠ å›º"
+            echo "ÒÑ¼Ó¹Ì"
         else
-            echo "æœªåŠ å›º,ç°åœ¨ä¿®æ”¹"
-            echo "order hostsï¼Œbind" >>$CONF_FILE;
+            echo "Î´¼Ó¹Ì,ÏÖÔÚĞŞ¸Ä"
+            echo "order hosts£¬bind" >>$CONF_FILE;
             echo "multi on" >>$CONF_FILE
             echo "nospoof on" >>$CONF_FILE
                 fi
@@ -517,32 +519,32 @@ function Venus_Linux_52(){
     return 0;
 }
 function Venus_Linux_53(){
-    Out_msg_Venus 53 "æ‰“å¼€syncookieç¼“è§£syn floodæ”»å‡»";
+    Out_msg_Venus 53 "´ò¿ªsyncookie»º½âsyn flood¹¥»÷";
 
     CONF_FILE=/etc/sysctl.conf
     Chk_Conf_Backup $CONF_FILE
     Var=`cat /proc/sys/net/ipv4/tcp_syncookies`
     
     if [ $Var -ne 1 ] ; then
-        echo "æœªåŠ å›ºï¼Œç°åœ¨ä¿®æ”¹"
+        echo "Î´¼Ó¹Ì£¬ÏÖÔÚĞŞ¸Ä"
         echo "net.ipv4.tcp_syncookies = 1">>$CONF_FILE
         /sbin/sysctl -p
     else
-        echo "å·²åŠ å›º";
+        echo "ÒÑ¼Ó¹Ì";
             fi
 
     Out_msg_end;
     return 0;
 }
 function Venus_Linux_54(){
-    Out_msg_Venus 54 "ä¸å“åº”ICMPè¯·æ±‚";
+    Out_msg_Venus 54 "²»ÏìÓ¦ICMPÇëÇó";
 
      Var=`cat /proc/sys/net/ipv4/icmp_echo_ignore_all`
     
         if [ $Var -ne 0 ] ; then
-            echo "å·²åŠ å›º"
+            echo "ÒÑ¼Ó¹Ì"
         else
-            echo "æœªåŠ å›ºï¼Œç°åœ¨åŠ å›º"
+            echo "Î´¼Ó¹Ì£¬ÏÖÔÚ¼Ó¹Ì"
             echo "net.ipv4.icmp_echo_ignore_all = 1" >> /etc/sysctl.conf
             /sbin/sysctl -p
                 fi
@@ -551,7 +553,7 @@ function Venus_Linux_54(){
     return 0;
 }
 function Venus_Linux_55(){
-    Out_msg_Venus 55 "ç¦æ­¢IPæºè·¯ç”±";
+    Out_msg_Venus 55 "½ûÖ¹IPÔ´Â·ÓÉ";
     
     CONF_FILE=/etc/sysctl.conf
     Chk_Conf_Backup $CONF_FILE; 
@@ -562,13 +564,13 @@ function Venus_Linux_55(){
     done
     
     if [ $Sum -ne 0 ] ; then
-        echo "æœªåŠ å›ºï¼Œç°åœ¨ä¿®æ”¹"
+        echo "Î´¼Ó¹Ì£¬ÏÖÔÚĞŞ¸Ä"
         
         for i in `/sbin/sysctl -a |awk -F"=" '$1~/accept_source_route/{print $1}'` ; do
             echo $i" = 0" >>$CONF_FILE
         done
     else
-        echo "å·²åŠ å›º"
+        echo "ÒÑ¼Ó¹Ì"
     fi
 
     Out_msg_end;
@@ -576,24 +578,24 @@ function Venus_Linux_55(){
 }
 
 function Venus_Linux_58(){
-    Out_msg_Venus 58 "apacheå’ŒdhcpæœåŠ¡æ£€æŸ¥"
+    Out_msg_Venus 58 "apacheºÍdhcp·şÎñ¼ì²é"
     
     RUN_LEVEL=`sed '/^#/'d /etc/inittab | sed -n '/^id/'p | awk -F: '{print $2}'`
     APACHE_STATUS=`find  /etc/rc.d/rc"$RUN_LEVEL".d -name "S*httpd*"|wc -l`
 
     if [ $APACHE_STATUS -ne 0 ] ; then
-        echo "apacheæœªåŠ å›º,ç°åœ¨ä¿®æ”¹";
+        echo "apacheÎ´¼Ó¹Ì,ÏÖÔÚĞŞ¸Ä";
         /sbin/chkconfig --level $RUN_LEVEL httpd off
     else
-        echo "apacheå·²åŠ å›º";
+        echo "apacheÒÑ¼Ó¹Ì";
     fi
 
     DHCPD_STATUS=`find  /etc/rc.d/rc"$RUN_LEVEL".d -name "S*DHCPDd*"|wc -l`
     if [ $APACHE_STATUS -ne 0 ] ; then
-        echo "dhcpdæœªåŠ å›º,ç°åœ¨ä¿®æ”¹";
+        echo "dhcpdÎ´¼Ó¹Ì,ÏÖÔÚĞŞ¸Ä";
         /sbin/chkconfig --level $RUN_LEVEL dhcpd off
     else
-        echo "dhcpdå·²åŠ å›º";
+        echo "dhcpdÒÑ¼Ó¹Ì";
     fi
 
 
@@ -602,7 +604,7 @@ function Venus_Linux_58(){
 }
 
 function Venus_Linux_59(){
-    Out_msg_Venus 59 "åˆå§‹æ–‡ä»¶åˆ›å»ºæƒé™"
+    Out_msg_Venus 59 "³õÊ¼ÎÄ¼ş´´½¨È¨ÏŞ"
 
         CONF_FILE=/etc/profile
 	Chk_Conf_Backup $CONF_FILE;
@@ -610,10 +612,10 @@ function Venus_Linux_59(){
 	
 	if [ -z "$Var" ]
 		then
-			echo -e "æœªè®¾ç½®ç”¨æˆ·UMASKå€¼\nç°åœ¨è®¾ç½®......";
+			echo -e "Î´ÉèÖÃÓÃ»§UMASKÖµ\nÏÖÔÚÉèÖÃ......";
 			echo "umask 077" >> $CONF_FILE;
 	else
-			echo "å·²è®¾ç½®ç”¨æˆ·UMASKå€¼";
+			echo "ÒÑÉèÖÃÓÃ»§UMASKÖµ";
 
 	fi
 
@@ -622,34 +624,34 @@ function Venus_Linux_59(){
 }
 
 function Venus_Linux_60(){
-    Out_msg_Venus 60 "è®¾ç½®å…³é”®æ–‡ä»¶çš„å±æ€§"
+    Out_msg_Venus 60 "ÉèÖÃ¹Ø¼üÎÄ¼şµÄÊôĞÔ"
     
-        if [ -f /var/log/message ] ; then
+        if [ -e /var/log/messages ] ; then
             Var=`lsattr /var/log/messages |awk '$1~/i/'|wc -l `
             
                 if [ $Var -ne 1 ] ; then
-                    echo "æœªåŠ å›ºï¼Œç°åœ¨ä¿®æ”¹"
+                    echo "Î´¼Ó¹Ì£¬ÏÖÔÚĞŞ¸Ä"
                     /usr/bin/chattr +a /var/log/messages
                 else
-                    echo "/var/log/messageså·²åŠ å›º"
+                    echo "/var/log/messagesÒÑ¼Ó¹Ì"
                         fi
         else
-            echo "/var/log/messagesæ–‡ä»¶ä¸å­˜åœ¨ï¼Œä¸ä½œä¿®æ”¹";
+            echo "/var/log/messagesÎÄ¼ş²»´æÔÚ£¬²»×÷ĞŞ¸Ä";
                 fi
 
-        Var=`ls -l /var/log/messages.*|wc -l`
+        Var=`ls -l /var/log/messages*|wc -l`
         
         if [ $Var -ne 0 ] ; then
-            Var2=`/usr/bin/lsattr /var/log/messages.* |wc -l`
+            Var2=`/usr/bin/lsattr /var/log/messages* |wc -l`
             
                 if [ $Var2 -ne $Var ] ; then
-                    echo "æœªåŠ å›º,ç°åœ¨ä¿®æ”¹"
+                    echo "Î´¼Ó¹Ì,ÏÖÔÚĞŞ¸Ä"
                     /usr/bin/chattr +i /var/log/messages.* 2>/dev/null
                 else
-                    echo "å·²åŠ å›º"
+                    echo "ÒÑ¼Ó¹Ì"
                         fi
         else
-            echo "/var/log/messages.*æ–‡ä»¶ä¸å­˜åœ¨ï¼Œä¸ä½œä¿®æ”¹"
+            echo "/var/log/messages.*ÎÄ¼ş²»´æÔÚ£¬²»×÷ĞŞ¸Ä"
                 fi
     
 
@@ -658,7 +660,7 @@ function Venus_Linux_60(){
 }
 
 function Venus_Linux_73(){
-    Out_msg_Venus 73 "å¯¹sshã€suç™»å½•æ—¥å¿—è¿›è¡Œè®°å½•"
+    Out_msg_Venus 73 "¶Ôssh¡¢suµÇÂ¼ÈÕÖ¾½øĞĞ¼ÇÂ¼"
 
     SYSLOG_CONF_FILE=/etc/syslog.conf
     Chk_Conf_Backup $SYSLOG_CONF_FILE
@@ -666,9 +668,9 @@ function Venus_Linux_73(){
     Var=`grep "^authpriv\.\*" /etc/syslog.conf|wc -l`
 
     if [ $Var -ne 0 ] ; then
-        echo "å·²åŠ å›º"
+        echo "ÒÑ¼Ó¹Ì"
     else
-        echo "æœªåŠ å›ºï¼Œç°åœ¨åŠ å›º"
+        echo "Î´¼Ó¹Ì£¬ÏÖÔÚ¼Ó¹Ì"
         echo "# The authpriv file has restricted access" >> $SYSLOG_CONF_FILE
         echo "authpriv.*    /var/log/secure">> $SYSLOG_CONF_FILE
         /etc/rc.d/init.d/syslog restart
@@ -679,18 +681,18 @@ function Venus_Linux_73(){
 }
 
 function Venus_Linux_76(){
-    Out_msg_Venus 76 "æŒ‡å®šä¸“ç”¨çš„syslogæœåŠ¡å™¨è®°å½•æ—¥å¿—"
+    Out_msg_Venus 76 "Ö¸¶¨×¨ÓÃµÄsyslog·şÎñÆ÷¼ÇÂ¼ÈÕÖ¾"
 
-    echo "æ­¤é¡¹åŠ å›ºéœ€æ‰‹åŠ¨ä¿®æ”¹ï¼š"
-    echo "éœ€è¦æä¾›æ—¥å¿—æœåŠ¡å™¨IPåœ°å€"
-    echo -e "åœ¨/etc/syslog.confæ–‡ä»¶ä¸­ï¼Œ\nå¢åŠ syslogæœåŠ¡å™¨IPåœ°å€è®¾ç½®ï¼š*.*\t\tsyslogserver_IPaddressï¼Œ\nå…¶ä¸­syslogserver_IPaddressæ˜¯ä¸€ä¸ªsyslogæœåŠ¡å™¨çš„IPåœ°å€\nå¹¶é‡å¯syslogæœåŠ¡ï¼Œ/etc/rc.d/init.d/syslog restart"
+    echo "´ËÏî¼Ó¹ÌĞèÊÖ¶¯ĞŞ¸Ä£º"
+    echo "ĞèÒªÌá¹©ÈÕÖ¾·şÎñÆ÷IPµØÖ·"
+    echo -e "ÔÚ/etc/syslog.confÎÄ¼şÖĞ£¬\nÔö¼Ósyslog·şÎñÆ÷IPµØÖ·ÉèÖÃ£º*.*\t\tsyslogserver_IPaddress£¬\nÆäÖĞsyslogserver_IPaddressÊÇÒ»¸ösyslog·şÎñÆ÷µÄIPµØÖ·\n²¢ÖØÆôsyslog·şÎñ£¬/etc/rc.d/init.d/syslog restart"
 
     Out_msg_end;
     return 0;
 }
 
 function Venus_Linux_81(){
-    Out_msg_Venus 81 "éšè—ç³»ç»Ÿæç¤ºä¿¡æ¯"
+    Out_msg_Venus 81 "Òş²ØÏµÍ³ÌáÊ¾ĞÅÏ¢"
     Chk_Conf_Backup /etc/rc.d/rc.local;
     Chk_Conf_Backup /etc/issue
     Chk_Conf_Backup /etc/issue.net
@@ -698,13 +700,13 @@ function Venus_Linux_81(){
     Var=`awk '$3~/issue/' /etc/rc.d/rc.local|wc -l`
 
     if [ $Var -ne 2 ] ; then
-        echo "æœªåŠ å›ºï¼Œç°åœ¨ä¿®æ”¹"
+        echo "Î´¼Ó¹Ì£¬ÏÖÔÚĞŞ¸Ä"
         echo "echo > /etc/issue" >> /etc/rc.d/rc.local
         echo "echo > /etc/issue.net" >> /etc/rc.d/rc.local
         echo > /etc/issue
         echo > /etc/issue.net
     else
-        echo "å·²åŠ å›º"
+        echo "ÒÑ¼Ó¹Ì"
             fi
 
     Out_msg_end;
@@ -712,18 +714,18 @@ function Venus_Linux_81(){
 }
 
 function Venus_Linux_82(){
-    Out_msg_Venus 82 "ç¦æ­¢Control-Alt-Deleteé”®ç›˜å…³é—­å‘½ä»¤"
+    Out_msg_Venus 82 "½ûÖ¹Control-Alt-Delete¼üÅÌ¹Ø±ÕÃüÁî"
     INIT_CONF_FILE=/etc/inittab
     Chk_Conf_Backup $INIT_CONF_FILE
 
     Var=`grep "^ca::ctrlaltdel:/sbin/shutdown" /etc/inittab |wc -l`
     if [ $Var -ne 0 ] ; then
-        echo "æœªåŠ å›º,ç°åœ¨ä¿®æ”¹";
+        echo "Î´¼Ó¹Ì,ÏÖÔÚĞŞ¸Ä";
         sed -i 's/^ca\:\:ctrlaltdel\:\/sbin\/shutdown/#&/g' $INIT_CONF_FILE 
         /sbin/init q
 
     else
-        echo "å·²åŠ å›º";
+        echo "ÒÑ¼Ó¹Ì";
             fi
 
     
@@ -733,17 +735,17 @@ function Venus_Linux_82(){
 }
 
 function Venus_Linux_86(){
-    Out_msg_Venus 86 "core dump çŠ¶æ€"
+    Out_msg_Venus 86 "core dump ×´Ì¬"
 
     Chk_Conf_Backup /etc/profile
 
     Var=` ulimit -a|awk '/core file size/{print $6}'`
 
     if [ $Var -ne 0 ] ; then
-        echo "æœªåŠ å›ºï¼Œç°åœ¨ä¿®æ”¹"
+        echo "Î´¼Ó¹Ì£¬ÏÖÔÚĞŞ¸Ä"
         echo "ulimit -c 0" >> /etc/profile
     else
-        echo "å·²åŠ å›º"
+        echo "ÒÑ¼Ó¹Ì"
             fi
     
 
@@ -752,13 +754,136 @@ function Venus_Linux_86(){
 }
 
 function Venus_Linux_88(){
-    Out_msg_Venus 88 "ç¬¬ä¸‰æ–¹å®‰å…¨äº§å“sshå®‰è£…æƒ…å†µ"
+    Out_msg_Venus 88 "µÚÈı·½°²È«²úÆ·ssh°²×°Çé¿ö"
     
-    echo "æ£€æŸ¥å·²å®‰è£…çš„sshç»„ä»¶"
+    echo "¼ì²éÒÑ°²×°µÄssh×é¼ş"
     rpm -qa | grep ssh 
-    echo "æ£€æŸ¥å½“å‰sshç‰ˆæœ¬"
+    echo "¼ì²éµ±Ç°ssh°æ±¾"
     ssh -V
 
     Out_msg_end;
     return 0;
 }
+
+
+
+function Venus_Linux_106(){
+    Out_msg_Venus 106 "É¾³ıÇ±ÔÚÎ£ÏÕÎÄ¼ş"
+    
+    if [ -e /root/.rhosts ] ; then
+      Chk_Conf_Backup /root/.rhosts
+      /bin/rm  /root/.rhosts
+    else
+      echo "/root/.rhosts ÒÑÉ¾³ı!"
+    fi
+
+    if [ -e /root/.netrc ] ; then
+        Chk_Conf_Backup  /root/.netrc
+        /bin/rm /root/.netrc
+    else
+        echo " /root/.netrc ÒÑÉ¾³ı!"
+    fi
+
+    if [ -e /etc/hosts.equiv ] ; then
+        Chk_Conf_Backup /etc/hosts.equiv
+        /bin/rm /etc/hosts.equiv
+    else
+        echo "/etc/hosts.equiv ÒÑÉ¾³ı!"
+    fi
+
+    Out_msg_end;
+    return 0;
+}
+
+function Venus_Linux_107(){
+     Out_msg_Venus 107 "FTPÄäÃûµÇÂ¼ÉèÖÃ"
+
+     CONF_FILE=/etc/vsftpd/vsftpd.conf
+     Had_Change=`awk -F"=" '{if($1=="anonymous_enable"){print $2}}'  $CONF_FILE |tr A-Z a-z `
+     
+     if [ "$Had_Change" != "no" ] ; then
+        Chk_Conf_Backup $CONF_FILE;
+        sed -i 's/^anonymous_enable.*/#&\nanonymous_enable=NO/' $CONF_FILE;
+
+     else
+        echo $CONF_FILE"ÒÑ¼Ó¹Ì" 
+     fi
+    
+     Out_msg_end;
+     return 0;
+}
+
+function Venus_Linux_109(){
+    Out_msg_Venus 109 "ÏµÍ³bannerÉèÖÃ"
+    # mv /etc/issue /etc/issue.bak # mv /etc/issue.net /etc/issue.net.bak
+
+    
+    if [ -e /etc/issue ] && [ -e /etc/issue.net ] ; then
+      Chk_Conf_Backup /etc/issue
+      Chk_Conf_Backup /etc/issue.net
+      /bin/rm /etc/issue
+      /bin/rm /etc/issue.net
+    else
+      echo "ÒÑ¼Ó¹Ì£¡"
+    fi
+
+    Out_msg_end;
+    return 0;
+}
+
+
+function Venus_Linux_110(){
+    Out_msg_Venus 110 "ÅäÖÃÈÕÖ¾·ÃÎÊÈ¨ÏŞ"
+
+    for i in /var/log/messages /var/log/secure /var/log/maillog /var/log/cron /var/log/spooler /var/log/boot.log 
+    do
+      
+      if [ `find $i -printf "%m" ` -ne "640" ] ; then
+        echo "Î´¼Ó¹Ì£¬ĞŞ¸Ä"$i"È¨ÏŞÎª640;"
+	chmod 640 $i		
+      else
+        echo "$iÒÑ¼Ó¹Ì£¡"
+      fi
+    done
+    Out_msg_end;
+    return 0;
+}
+
+function Venus_Linux_111(){
+  Out_msg_Venus 111 "ÏŞÖÆÔ¶³ÌµÇÂ¼"
+    
+  Had_Change=`awk -F"=| " '$1~/^PermitRootLogin/{print $2}' /etc/ssh/sshd_config|tr A-Z a-z`
+
+  if [ $Had_Change != "no" ] ; then
+    Chk_Conf_Backup /etc/ssh/sshd_config
+    sed -i "s/^PermitRootLogin.*/#&\nPermitRootLogin no/" /etc/ssh/sshd_config
+  else
+    echo "ÒÑ¼Ó¹Ì£¡"
+  fi
+
+  Out_msg_end;
+  return 0;
+} 
+
+function Venus_Linux_112(){
+    Out_msg_Venus 112 "½ûÓÃTelnetÃ÷ÎÄ´«ÊäĞ­Òé"
+    
+    TELNET_ON=`grep disable /etc/xinetd.d/*|grep telnet|awk '$4!~/yes/{print $1}'|tr ":" " "`
+
+    if [ `grep disable /etc/xinetd.d/*|grep telnet|awk '$4!~/yes/{print $1}'|wc -l` -ne 0 ] ; then
+      for i in $TELNET_ON
+      do
+        echo $i"Î´¼Ó¹Ì£¡ÏÖÔÚ¼Ó¹Ì"
+        /sbin/chkconfig `basename $i` off;
+        /sbin/service xinetd restart 
+      done
+    else
+        echo "telnetÒÑ¼Ó¹Ì£¡"
+    fi
+    
+
+}
+
+
+
+

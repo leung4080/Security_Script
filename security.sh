@@ -23,7 +23,7 @@
 test "$(whoami)" != 'root' && (echo you are using a non-privileged account , please run as root ! ; exit 1)
 
 #设置LANG
-LANG=C
+LANG=c
 export LANG
 
 #获取当前日期：
@@ -31,9 +31,6 @@ DATE=`date +%Y%m%d`
 
 #进入脚本所在目录
 cd `dirname $0`;
-
-declare -a NoCheck=([0]="null");
-
 
 
 #---  FUNCTION  ----------------------------------------------------------------
@@ -85,7 +82,7 @@ function Chk_Conf_Backup(){
 		    return 0;
 	    fi
     else
-      echo "[error ] "$SYS_CONF" no exist !"
+      echo "[error ] "$SYS_CONF"no exist !"
     fi
 }
 
@@ -119,6 +116,7 @@ function BACKUP_SYS_CONF(){
 
 function Check_Linux_1(){
     Out_msg_head 1 "修改用户主目录权限";
+
     awk -F":" '($3==0 || $3>=500 ) && $6!~/(\/var|\/usr|\/sbin|\/etc|\/dev|\/bin|^\/$)/{print $6}' /etc/passwd|uniq|xargs -i find {} -maxdepth 0 -printf "echo \"chmod %m %p\";chmod %m %p\n" 2>/dev/null |bash 
     
     Out_msg_end;
@@ -295,15 +293,15 @@ function Check_Linux_11(){
 	    Out_msg_head 11 "控制FTP进程缺省访问权限\n当通过FTP服务创建新文件或目录时应屏蔽掉新文件或目录不应有的访问允许权限。";
 
  
-        if [ -e /etc/ftpusers ] ; then
+        if [ -f /etc/ftpusers ] ; then
             FTPUSERS_FILE=/etc/ftpusers
             FTPACCESS_FILE=/etc/ftpaccess
         else
-            if [ -d /etc/ftpd ] && [ -e /etc/ftpd/ftpusers ]; then
+            if [ -d /etc/ftpd ] ; then
             FTPUSERS_FILE=/etc/ftpd/ftpusers
             FTPACCESS_FILE=/etc/ftpd/ftpaccess
             else
-                echo "/etc/ftpusers和/etc/ftpd/ftpusers不存在，请检查是否已安装ftp"
+                "/etc/ftpusers和/etc/ftpd/ftpusers不存在，请检查是否已安装ftp"
                 return 0;
             fi
         fi
@@ -330,7 +328,7 @@ nobody4" >> $FTPUSERS_FILE
 function Check_Linux_12(){
 	    Out_msg_head 12 "设备应配置日志功能，对用户登录进行记录，记录内容包括至少包括审计日期、时间、发起者信息、审计类型、审计内容描述和结果等要素。";
 
-      SYSLOG_PACKAGE=` LANG=c /sbin/chkconfig --list|grep syslog|grep on|awk '{print $1}'`
+      SYSLOG_PACKAGE=` LANG=c /sbin/chkconfig --list|grep syslog|grep on|awk '{print $1}'  LANG=c /sbin/chkconfig --list|grep syslog|grep on|awk '{print $1}' `
         if [ -z $SYSLOG_PACKAGE ];
         then
 
@@ -364,6 +362,7 @@ function Check_Linux_12(){
 
 function Check_Linux_13(){
 	    Out_msg_head 13 "设备应配置日志功能，记录对与设备相关的安全事件。";
+        SYSLOG_PACKAGE=`ps -ef|grep syslog |grep -v grep |awk '{print $8}'|xargs which|xargs rpm -qf|head -1`
 
         if [ -z $SYSLOG_PACKAGE ];
         then
